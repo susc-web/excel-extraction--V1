@@ -74,21 +74,18 @@ function formatPhone(value: unknown){
 
   if(!value) return "";
 
-
   let v =
     String(value)
     .replace(/\D/g,"");
 
 
-  // Convert +61 or 61 format to 0 format
   if(v.startsWith("61")){
-    v = "0" + v.substring(2);
+    v = v.substring(2);
   }
 
 
-  // Force every phone to have leading 0
-  if(v.length > 0 && !v.startsWith("0")){
-    v = "0" + v;
+  if(v.startsWith("0")){
+    v = v.substring(1);
   }
 
 
