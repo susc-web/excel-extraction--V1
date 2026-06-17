@@ -41,19 +41,12 @@ const mapping = {
 
 function formatCell(value: unknown) {
 
-  if (
-    value === undefined ||
-    value === null ||
-    value === ""
-  ) return "";
-
+  if(value === undefined || value === null || value === "")
+    return "";
 
   if(value instanceof Date){
-    return value
-      .toISOString()
-      .split("T")[0];
+    return value.toISOString().split("T")[0];
   }
-
 
   return String(value);
 }
@@ -64,15 +57,13 @@ function formatPhone(value: unknown){
 
   if(!value) return "";
 
-
   let v =
     String(value)
     .replace(/\D/g,"");
 
 
   if(v.startsWith("61")){
-    v =
-    "0"+v.substring(2);
+    v="0"+v.substring(2);
   }
 
 
@@ -82,14 +73,14 @@ function formatPhone(value: unknown){
 
 
 function joinNonEmpty(
- values:string[],
- sep:string
+values:string[],
+sep:string
 ){
 
- return values
- .map(x=>x.trim())
- .filter(Boolean)
- .join(sep);
+return values
+.map(x=>x.trim())
+.filter(Boolean)
+.join(sep);
 
 }
 
@@ -103,27 +94,20 @@ useRef<HTMLInputElement|null>(null);
 
 
 
-const [fileName,setFileName] =
-useState("");
-
-const [rows,setRows] =
-useState<Row[]>([]);
-
-
-const [status,setStatus] =
-useState("");
+const [fileName,setFileName]=useState("");
+const [rows,setRows]=useState<Row[]>([]);
+const [status,setStatus]=useState("");
 
 
 
-const reset = ()=>{
+const reset=()=>{
 
 setFileName("");
 setRows([]);
 setStatus("");
 
-if(fileInputRef.current){
- fileInputRef.current.value="";
-}
+if(fileInputRef.current)
+fileInputRef.current.value="";
 
 };
 
@@ -141,37 +125,34 @@ const wb =
 XLSX.read(
 buffer,
 {
- type:"array",
- cellDates:true
+type:"array",
+cellDates:true
 }
 );
 
 
+
 const ws =
-wb.Sheets[
-wb.SheetNames[0]
-];
+wb.Sheets[wb.SheetNames[0]];
+
 
 
 const json =
 XLSX.utils.sheet_to_json<Row>(
 ws,
 {
- defval:""
+defval:""
 }
 );
 
 
 
 setRows(json);
-
 setFileName(file.name);
-
 
 setStatus(
 `Loaded ${json.length} rows`
 );
-
 
 };
 
@@ -179,47 +160,32 @@ setStatus(
 
 
 const onFileChange =
-(
-e:React.ChangeEvent<HTMLInputElement>
-)=>{
+(e:React.ChangeEvent<HTMLInputElement>)=>{
 
-const file =
-e.target.files?.[0];
-
+const file=e.target.files?.[0];
 
 if(file)
 handleFile(file);
+  
 
 };
-
-
-
-
-
-
 const buildRowForJob = (
 jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
 
 
-const first =
-jobRows[0] ?? {};
+const first=jobRows[0] ?? {};
 
 
 
-const get =
-(key:keyof typeof mapping)=>{
+const get=(key:keyof typeof mapping)=>{
 
-const col =
-mapping[key];
+const col=mapping[key];
 
-return formatCell(
-first[col]
-);
+return formatCell(first[col]);
 
 };
-
 
 
 
@@ -234,12 +200,10 @@ get("lastName")
 
 
 
-
 const phone =
 formatPhone(
 first[mapping.phone]
 );
-
 
 
 
@@ -257,12 +221,12 @@ get("state")
 
 
 
-
 const groups =
 new Map<string,{
 product:string;
 model:string;
-serials:string[];
+outdoor:string[];
+indoor:string[];
 }>();
 
 
@@ -272,29 +236,20 @@ for(const row of jobRows){
 
 
 const product =
-formatCell(
-row[mapping.product]
-);
+formatCell(row[mapping.product]);
 
 
 const model =
-formatCell(
-row[mapping.productModel]
-);
+formatCell(row[mapping.productModel]);
 
 
 const serial =
-formatCell(
-row[mapping.serial]
-);
+formatCell(row[mapping.serial]);
 
 
 
-if(
-!product &&
-!model &&
-!serial
-) continue;
+if(!product && !model && !serial)
+continue;
 
 
 
@@ -310,7 +265,8 @@ key,
 {
 product,
 model,
-serials:[]
+outdoor:[],
+indoor:[]
 }
 );
 
@@ -318,27 +274,49 @@ serials:[]
 
 
 
+
 if(serial){
 
-const g =
-groups.get(key)!;
+
+const g=groups.get(key)!;
 
 
-if(!g.serials.includes(serial)){
-g.serials.push(serial);
+const type =
+String(
+row[mapping.questionCol] ?? ""
+)
+.toLowerCase();
+
+
+
+if(type.includes("outdoor")){
+
+
+if(!g.outdoor.includes(serial))
+g.outdoor.push(serial);
+
+
+}else{
+
+
+if(!g.indoor.includes(serial))
+g.indoor.push(serial);
+
+
 }
 
-}
-
 
 }
 
 
+}
 
 
 
 
-const coes:string[] = [];
+
+
+const coes:string[]=[];
 
 
 
@@ -365,75 +343,13 @@ coes.push("");
 
 
 
-
-const outdoor:string[]=[];
-const indoor:string[]=[];
-
-
-
-for(const row of jobRows){
-
-
-const serial =
-formatCell(
-row[mapping.serial]
-);
-
-
-
-if(!serial) continue;
-
-
-
-
-const type =
-String(
-row[mapping.questionCol] ?? ""
-)
-.toLowerCase();
-
-
-
-
-if(type.includes("outdoor")){
-
-
-if(!outdoor.includes(serial)){
-outdoor.push(serial);
-}
-
-
-}else{
-
-
-if(!indoor.includes(serial)){
-indoor.push(serial);
-}
-
-
-}
-
-
-}
-
-
-
-
-
-
-if(outdoor.length){
-
+if(g.outdoor.length){
 
 coes.push("Outdoor:");
 
-
-
-outdoor.forEach(s=>{
-
+g.outdoor.forEach(s=>{
 coes.push(s);
-
 });
-
 
 
 coes.push("");
@@ -442,23 +358,15 @@ coes.push("");
 
 
 
-
-if(indoor.length){
-
+if(g.indoor.length){
 
 coes.push("Indoor:");
 
-
-
-indoor.forEach(s=>{
-
+g.indoor.forEach(s=>{
 coes.push(s);
-
 });
 
-
 }
-
 
 
 });
@@ -470,29 +378,26 @@ return {
 
 "Job ID":jobId,
 
-"Customer Name":
-customerName,
+"Customer Name":customerName,
 
+"Customer Phone":phone,
 
-"Customer Phone":
-phone,
+"Address":address,
 
+"Installation Date":get("installDate"),
 
-"Address":
-address,
-
-
-"Installation Date":
-get("installDate"),
-
-
-"CoES":
-coes.join("\n")
+"CoES":coes.join("\n")
 
 };
 
 };
-const createOutput = ()=>{
+
+
+
+
+
+
+const createOutput=()=>{
 
 
 const jobMap =
@@ -504,25 +409,21 @@ for(const row of rows){
 
 
 const id =
-String(
-row[mapping.jobId] ?? ""
-);
+String(row[mapping.jobId] ?? "");
 
 
 
-if(!id) continue;
+if(!id)
+continue;
 
 
 
-if(!jobMap.has(id)){
+if(!jobMap.has(id))
 jobMap.set(id,[]);
-}
 
 
 
-jobMap
-.get(id)!
-.push(row);
+jobMap.get(id)!.push(row);
 
 }
 
@@ -530,12 +431,8 @@ jobMap
 
 
 return Array.from(jobMap)
-.map(
-([id,data])=>
-buildRowForJob(
-id,
-data
-)
+.map(([id,data])=>
+buildRowForJob(id,data)
 );
 
 
@@ -546,7 +443,8 @@ data
 
 
 
-const downloadExcel = ()=>{
+
+const downloadExcel=()=>{
 
 
 const output =
@@ -558,34 +456,30 @@ const ws =
 XLSX.utils.json_to_sheet(
 output,
 {
-header:[
-...OUTPUT_COLUMNS
-]
+header:[...OUTPUT_COLUMNS]
 }
 );
 
 
 
-
 ws["!cols"] =
-OUTPUT_COLUMNS.map(
-c=>({
+OUTPUT_COLUMNS.map(c=>({
 
 wch:
 c==="CoES"
-?50
+?60
 :c==="Address"
 ?45
 :25
 
-})
-);
+}));
 
 
 
 
 const wb =
 XLSX.utils.book_new();
+
 
 
 XLSX.utils.book_append_sheet(
@@ -607,7 +501,6 @@ setStatus(
 `Exported ${output.length} jobs`
 );
 
-
 };
 
 
@@ -626,119 +519,65 @@ rows
 
 
 
+
+
+
 return (
 
-<div className="
-min-h-screen
-bg-gray-100
-p-6
-">
+<div className="min-h-screen bg-gray-100 p-6">
+
+<div className="mx-auto max-w-6xl">
 
 
-<div className="
-mx-auto
-max-w-6xl
-">
+<div className="mb-8">
 
 
-<div className="
-mb-8
-">
-
-
-<div className="
-flex
-items-center
-gap-2
-text-blue-600
-">
-
+<div className="flex items-center gap-2 text-blue-600">
 
 <FileSpreadsheet size={25}/>
 
-
-<h1 className="
-text-3xl
-font-bold
-text-black
-">
-
+<h1 className="text-3xl font-bold text-black">
 Excel Job Formatter
-
 </h1>
-
 
 </div>
 
 
-<p className="
-mt-2
-text-gray-600
-">
-
+<p className="mt-2 text-gray-600">
 Upload Excel → Preview → Download
-
 </p>
 
 
 
-{
-status &&
-<div className="
-mt-3
-rounded
-bg-green-100
-p-2
-text-green-700
-">
-
+{status &&
+<div className="mt-3 rounded bg-green-100 p-2 text-green-700">
 {status}
-
 </div>
 }
 
 
+
 </div>
 
 
 
 
 
-{
-!fileName ? (
+{!fileName ? (
 
-
-
-<div className="
-rounded-xl
-border-2
-border-dashed
-bg-white
-p-14
-text-center
-">
+<div className="rounded-xl border-2 border-dashed bg-white p-14 text-center">
 
 
 <Upload
 size={55}
-className="
-mx-auto
-text-blue-600
-"
+className="mx-auto text-blue-600"
 />
 
 
 
-<h2 className="
-mt-4
-text-xl
-font-semibold
-">
-
+<h2 className="mt-4 text-xl font-semibold">
 Upload Excel File
-
 </h2>
-
 
 
 
@@ -748,13 +587,9 @@ ref={fileInputRef}
 
 type="file"
 
-accept="
-.xlsx,.xls,.csv
-"
+accept=".xlsx,.xls,.csv"
 
-className="
-mt-5
-"
+className="mt-5"
 
 onChange={onFileChange}
 
@@ -764,55 +599,28 @@ onChange={onFileChange}
 </div>
 
 
-
 ):(
-
-
 
 
 <div className="space-y-6">
 
 
+<div className="rounded-xl bg-white p-5 shadow">
 
 
-
-<div className="
-rounded-xl
-bg-white
-p-5
-shadow
-">
-
-
-<div className="
-flex
-justify-between
-">
+<div className="flex justify-between">
 
 
 <div>
 
-
-<h2 className="
-font-bold
-">
-
+<h2 className="font-bold">
 {fileName}
-
 </h2>
 
 
-
-<p className="
-text-sm
-text-gray-500
-">
-
+<p className="text-sm text-gray-500">
 {rows.length} rows
-
-
 </p>
-
 
 </div>
 
@@ -822,69 +630,38 @@ text-gray-500
 
 onClick={reset}
 
-className="
-rounded
-bg-red-100
-px-3
-py-2
-text-red-600
-"
-
+className="rounded bg-red-100 px-3 py-2 text-red-600"
 
 >
 
-<X
-size={16}
-className="inline"
-/>
+<X size={16} className="inline"/>
 
 Remove
 
 </button>
 
 
-
 </div>
 
 
-
-
-<div className="
-mt-5
-">
 
 
 <button
 
 onClick={downloadExcel}
 
-className="
-rounded
-bg-blue-600
-px-5
-py-3
-text-white
-"
-
+className="mt-5 rounded bg-blue-600 px-5 py-3 text-white"
 
 >
 
 
-<ListChecks
-size={18}
-className="inline mr-2"
-/>
-
+<ListChecks size={18} className="inline mr-2"/>
 
 Download Excel
-
 
 </button>
 
 
-</div>
-
-
 
 </div>
 
@@ -892,18 +669,9 @@ Download Excel
 
 
 
+{preview.length>0 && (
 
-{
-preview.length > 0 && (
-
-
-
-<div className="
-overflow-auto
-rounded-xl
-bg-white
-shadow
-">
+<div className="overflow-auto rounded-xl bg-white shadow">
 
 
 <table className="w-full border">
@@ -911,20 +679,14 @@ shadow
 
 <thead className="bg-gray-200">
 
-
 <tr>
-
 
 {
 OUTPUT_COLUMNS.map(c=>(
 
 <th
 key={c}
-className="
-border
-p-3
-text-left
-"
+className="border p-3 text-left"
 >
 
 {c}
@@ -934,13 +696,10 @@ text-left
 ))
 }
 
-
-
 </tr>
 
 
 </thead>
-
 
 
 
@@ -951,84 +710,55 @@ text-left
 {
 preview.map(row=>(
 
-
 <tr key={row["Job ID"]}>
 
 
 {
 OUTPUT_COLUMNS.map(c=>(
 
-
 <td
 
 key={c}
 
-className="
-border
-p-3
-align-top
-whitespace-pre-line
-"
-
+className="border p-3 align-top whitespace-pre-line"
 
 >
 
 {row[c]}
 
-
 </td>
 
-
 ))
-
 }
-
 
 
 </tr>
 
-
 ))
 }
-
 
 
 </tbody>
 
 
-
 </table>
 
 
-
 </div>
 
-
-
-)
-}
-
-
-
-
+)}
 
 
 </div>
 
-
-)
-
-}
-
+)}
 
 
 </div>
-
 
 </div>
 
 );
-
 
 }
 
