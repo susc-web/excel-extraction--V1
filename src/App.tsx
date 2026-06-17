@@ -273,6 +273,13 @@ row[key]
 
 };
 
+const customerFirst =
+  findValue(mapping.firstName);
+
+
+const customerLast =
+  findValue(mapping.lastName);
+
 
 const customerName =
 [
@@ -281,7 +288,6 @@ const customerName =
 ]
 .filter(Boolean)
 .join(" ");
-
 
 const get =
 (key:keyof typeof mapping)=>{
