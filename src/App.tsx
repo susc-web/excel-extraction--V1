@@ -192,12 +192,11 @@ return formatCell(first[col]);
 const customerName =
 joinNonEmpty(
 [
-get("firstName"),
-get("lastName")
+formatCell(jobRows[0]?.[mapping.firstName]),
+formatCell(jobRows[0]?.[mapping.lastName])
 ],
 " "
 );
-
 
 
 const phone =
