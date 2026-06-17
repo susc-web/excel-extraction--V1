@@ -203,8 +203,26 @@ jobRows:Row[]
 ):Record<OutputCol,string>=>{
 
 
-const first =
-jobRows[0] ?? {};
+const customerFirst =
+jobRows.find(
+  r => r[mapping.firstName]
+)?.[mapping.firstName];
+
+
+const customerLast =
+jobRows.find(
+  r => r[mapping.lastName]
+)?.[mapping.lastName];
+
+
+const customerName =
+joinNonEmpty(
+[
+  formatCell(customerFirst),
+  formatCell(customerLast)
+],
+" "
+);
 
 
 
@@ -223,14 +241,6 @@ first[col]
 
 
 
-const customerName =
-joinNonEmpty(
-[
-get("firstName"),
-get("lastName")
-],
-" "
-);
 
 
 
