@@ -426,30 +426,31 @@ if(title){
 
 
 
-g.serials.forEach(
-(serial,index)=>{
+const outdoor = g.serials[0];
 
+if (outdoor) {
 
-if(index === 0){
-
-coes.push(
-`Outdoor : ${serial}`
-);
+  coes.push(
+    `Outdoor : ${outdoor}`
+  );
 
 }
-else{
 
-coes.push(
-`Indoor : ${serial}`
-);
+
+// all remaining serials are Indoor
+const indoorSerials = g.serials.slice(1);
+
+if (indoorSerials.length > 0) {
+
+  coes.push(
+    `Indoor : ${indoorSerials.join(",\n             ")}`
+  );
 
 }
 
 
 });
 
-
-});
 
 
 
