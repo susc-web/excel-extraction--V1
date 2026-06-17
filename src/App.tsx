@@ -273,10 +273,10 @@ row[key]
 
 };
 const customerFirst =
-  formatCell(findValue(mapping.firstName));
+  formatCell(first(mapping.firstName));
 
 const customerLast =
-  formatCell(findValue(mapping.lastName));
+  formatCell(first(mapping.lastName));
 
 const customerName =
   `${customerFirst} ${customerLast}`.trim();
