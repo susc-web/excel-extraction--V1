@@ -218,16 +218,51 @@ jobRows[0] ?? {};
 
 
 
-const customerFirst =
+const findValue = (column:string)=>{
+
+const row =
 jobRows.find(
-  r => r[mapping.firstName]
-)?.[mapping.firstName];
+r =>
+Object.keys(r)
+.some(
+k =>
+k.trim().toLowerCase()
+===
+column.trim().toLowerCase()
+)
+);
+
+
+if(!row)
+return "";
+
+
+const key =
+Object.keys(row)
+.find(
+k =>
+k.trim().toLowerCase()
+===
+column.trim().toLowerCase()
+);
+
+
+return key
+?
+row[key]
+:
+"";
+
+};
+
+
+
+const customerFirst =
+findValue(mapping.firstName);
+
 
 const customerLast =
-jobRows.find(
-  r => r[mapping.lastName]
-)?.[mapping.lastName];
-
+findValue(mapping.lastName);
 
 const customerName =
 joinNonEmpty(
