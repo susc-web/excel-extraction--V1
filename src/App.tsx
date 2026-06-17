@@ -226,52 +226,6 @@ jobRows:Row[]
 
 
 
-
-const findValue = (column:string)=>{
-
-const row =
-jobRows.find(
-r =>
-Object.keys(r)
-.some(
-k =>
-k.trim()
-.toLowerCase()
-.includes(
-column.trim()
-.toLowerCase()
-)
-)
-);
-
-
-if(!row)
-return "";
-
-
-const key =
-Object.keys(row)
-.find(
-k =>
-k.trim()
-.toLowerCase()
-.includes(
-column.trim()
-.toLowerCase()
-)
-);
-
-
-return key
-?
-row[key]
-:
-"";
-
-};const first =
-jobRows[0] ?? {};
-
-
 const findValue = (column:string)=>{
 
 const row =
