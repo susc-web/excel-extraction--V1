@@ -225,9 +225,6 @@ jobRows:Row[]
 ):Record<OutputCol,string>=>{
 
 
-const first =
-jobRows[0] ?? {};
-
 
 
 const findValue = (column:string)=>{
