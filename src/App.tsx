@@ -268,21 +268,61 @@ row[key]
 :
 "";
 
-};
-const first =
+};const first =
 jobRows[0] ?? {};
 
 
-const customerFirst =
-  formatCell(first[mapping.firstName]);
+const findValue = (column:string)=>{
 
+const row =
+jobRows.find(
+r =>
+Object.keys(r)
+.some(
+k =>
+k.trim().toLowerCase()
+===
+column.trim().toLowerCase()
+)
+);
+
+
+if(!row)
+return "";
+
+
+const key =
+Object.keys(row)
+.find(
+k =>
+k.trim().toLowerCase()
+===
+column.trim().toLowerCase()
+);
+
+
+return key
+?
+row[key]
+:
+"";
+
+};
+
+
+// ADD HERE
+
+const customerFirst =
+  formatCell(findValue(mapping.firstName));
 
 const customerLast =
-  formatCell(first[mapping.lastName]);
+  formatCell(findValue(mapping.lastName));
 
 
 const customerName =
-  `${customerFirst} ${customerLast}`.trim();
+  [customerFirst, customerLast]
+  .filter(Boolean)
+  .join(" ");
 
 
 const get =
