@@ -272,22 +272,15 @@ row[key]
 "";
 
 };
-
 const customerFirst =
-  findValue(mapping.firstName);
-
+  formatCell(findValue(mapping.firstName));
 
 const customerLast =
-  findValue(mapping.lastName);
-
+  formatCell(findValue(mapping.lastName));
 
 const customerName =
-[
-  formatCell(customerFirst),
-  formatCell(customerLast)
-]
-.filter(Boolean)
-.join(" ");
+  `${customerFirst} ${customerLast}`.trim();
+
 
 const get =
 (key:keyof typeof mapping)=>{
