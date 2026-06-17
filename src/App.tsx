@@ -20,25 +20,19 @@ const norm = (s: string) =>
 function formatCell(v: unknown) {
   if (v === undefined || v === null || v === "") return "";
   if (v instanceof Date) {
-    return v.toISOString().split("T")[0];
+    return `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, "0")}-${String(
+      v.getDate()
+    ).padStart(2, "0")}`;
   }
   return String(v);
 }
 
-function formatPhone(v: unknown) {
-  if (!v) return "";
-  let s = String(v).replace(/[\s\-().+]/g, "");
-  if (s.startsWith("61") && s.length === 11) s = "0" + s.slice(2);
-  if (/^\d{9}$/.test(s)) s = "0" + s;
-  return s;
-}
-
 function App() {
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [rows, setRows] = useState<Row[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFile = async (file: File) => {
     const buf = await file.arrayBuffer();
@@ -53,12 +47,20 @@ function App() {
     setFileName(file.name);
   };
 
-  // GROUP BY JOB ID
+  // ✅ GROUP JOBS (FIXED DETECTION)
   const jobGroups = useMemo(() => {
     const map = new Map<string, Row[]>();
 
     for (const r of rows) {
-      const id = String(r["Job ID"] || r["job id"] || r["jobid"] || "");
+      const id =
+        String(
+          r["Job ID"] ??
+          r["JobId"] ??
+          r["jobid"] ??
+          r["job id"] ??
+          ""
+        ).trim();
+
       if (!id) continue;
 
       if (!map.has(id)) map.set(id, []);
@@ -68,23 +70,27 @@ function App() {
     return map;
   }, [rows]);
 
-  // BUILD FINAL OUTPUT (THIS IS YOUR CORE LOGIC)
+  // ✅ FINAL OUTPUT (YOUR CORE LOGIC KEPT)
   const output = useMemo(() => {
     const result: any[] = [];
 
     jobGroups.forEach((jobRows, jobId) => {
       const first = jobRows[0] || {};
 
-      const firstName = first["First Name"] || first["firstname"] || "";
-      const lastName = first["Last Name"] || first["lastname"] || "";
-      const phone = first["Phone"] || first["mobile"] || "";
-      const address = first["Address"] || "";
-      const suburb = first["Suburb"] || "";
-      const postcode = first["Postcode"] || "";
-      const state = first["State"] || "";
-      const install = first["Install Date"] || first["Installation Date"] || "";
+      const get = (keys: string[]) => {
+        for (const k of keys) {
+          if (first[k]) return first[k];
+        }
+        return "";
+      };
 
-      // COES LOGIC (KEEP FULL DETAIL)
+      const firstName = get(["First Name", "firstname"]);
+      const lastName = get(["Last Name", "lastname"]);
+      const phone = get(["Phone", "Mobile"]);
+      const address = get(["Address"]);
+      const suburb = get(["Suburb"]);
+      const install = get(["Install Date"]);
+
       const coes = jobRows
         .map((r) => {
           const product = r["Product"] || "";
@@ -92,15 +98,17 @@ function App() {
           const serial = r["Serial"] || "";
           const type = String(r["Type"] || "").toLowerCase();
 
-          return `${product} ${model}\n${type.includes("outdoor") ? "Outdoor" : "Indoor"}: ${serial}`;
+          return `${product} ${model}\n${
+            type.includes("outdoor") ? "Outdoor" : "Indoor"
+          }: ${serial}`;
         })
         .join("\n");
 
       result.push({
         "Job ID": jobId,
         "Customer Name": `${firstName} ${lastName}`.trim(),
-        "Customer Phone": formatPhone(phone),
-        "Address": `${address}, ${suburb}, ${postcode}, ${state}`,
+        "Customer Phone": phone,
+        Address: `${address} ${suburb}`,
         "Installation Date": install,
         CoES: coes,
       });
@@ -110,10 +118,7 @@ function App() {
   }, [jobGroups]);
 
   const download = () => {
-    const ws = XLSX.utils.json_to_sheet(output, {
-      header: [...OUTPUT_COLUMNS],
-    });
-
+    const ws = XLSX.utils.json_to_sheet(output);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Jobs");
     XLSX.writeFile(wb, "formatted_output.xlsx");
@@ -125,7 +130,7 @@ function App() {
 
       <input
         type="file"
-        ref={fileRef}
+        ref={fileInputRef}
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) handleFile(f);
@@ -133,30 +138,30 @@ function App() {
       />
 
       {fileName && (
-        <>
+        <div style={{ marginTop: 20 }}>
           <p>File: {fileName}</p>
-          <p>Total Rows: {rows.length}</p>
-          <p>Jobs Found: {jobGroups.size}</p>
+          <p>Rows: {rows.length}</p>
+          <p>Jobs: {jobGroups.size}</p>
 
           <button
             onClick={download}
             style={{
-              marginTop: 10,
               padding: "10px 15px",
               background: "green",
               color: "white",
               borderRadius: 6,
               border: 0,
+              marginTop: 10,
             }}
           >
             Download Excel
           </button>
 
-          <h3>Preview Output</h3>
+          <h3 style={{ marginTop: 20 }}>Preview</h3>
           <pre style={{ fontSize: 12, background: "#f5f5f5", padding: 10 }}>
-            {JSON.stringify(output.slice(0, 2), null, 2)}
+            {JSON.stringify(output.slice(0, 3), null, 2)}
           </pre>
-        </>
+        </div>
       )}
     </div>
   );
