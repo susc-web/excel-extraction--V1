@@ -443,8 +443,6 @@ if(g.serials.length > 0){
 });
 
 
-});
-
 
 
 
