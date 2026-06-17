@@ -238,9 +238,12 @@ r =>
 Object.keys(r)
 .some(
 k =>
-k.trim().toLowerCase()
-===
-column.trim().toLowerCase()
+k.trim()
+.toLowerCase()
+.includes(
+column.trim()
+.toLowerCase()
+)
 )
 );
 
@@ -253,9 +256,12 @@ const key =
 Object.keys(row)
 .find(
 k =>
-k.trim().toLowerCase()
-===
-column.trim().toLowerCase()
+k.trim()
+.toLowerCase()
+.includes(
+column.trim()
+.toLowerCase()
+)
 );
 
 
@@ -268,23 +274,13 @@ row[key]
 };
 
 
-
-const customerFirst =
-findValue(mapping.firstName);
-
-
-const customerLast =
-findValue(mapping.lastName);
-
 const customerName =
-joinNonEmpty(
 [
   formatCell(customerFirst),
   formatCell(customerLast)
-],
-" "
-);
-
+]
+.filter(Boolean)
+.join(" ");
 
 
 const get =
