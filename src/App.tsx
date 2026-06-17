@@ -203,33 +203,7 @@ return formatCell(first[col]);
 
 
 
-const customerName =
-joinNonEmpty(
-[
-formatCell(jobRows[0]?.[mapping.firstName]),
-formatCell(jobRows[0]?.[mapping.lastName])
-],
-" "
-);
 
-
-const phone =
-formatPhone(
-first[mapping.phone]
-);
-
-
-
-const address =
-joinNonEmpty(
-[
-get("address"),
-get("suburb"),
-get("postcode"),
-get("state")
-],
-", "
-);
 
 
 
