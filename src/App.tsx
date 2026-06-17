@@ -7,9 +7,7 @@ import {
   ListChecks
 } from "lucide-react";
 
-
 type Row = Record<string, unknown>;
-
 
 const OUTPUT_COLUMNS = [
   "Job ID",
@@ -20,8 +18,7 @@ const OUTPUT_COLUMNS = [
   "CoES",
 ] as const;
 
-
-type OutputCol = typeof OUTPUT_COLUMNS[number];
+type OutputCol = (typeof OUTPUT_COLUMNS)[number];
 
 
 const mapping = {
@@ -47,8 +44,9 @@ function formatCell(value: unknown) {
   if(value === undefined || value === null || value === "")
     return "";
 
-  if(value instanceof Date)
+  if(value instanceof Date){
     return value.toISOString().split("T")[0];
+  }
 
   return String(value);
 }
@@ -59,11 +57,15 @@ function formatPhone(value: unknown){
 
   if(!value) return "";
 
-  let v = String(value).replace(/\D/g,"");
+  let v =
+    String(value)
+    .replace(/\D/g,"");
+
 
   if(v.startsWith("61")){
     v="0"+v.substring(2);
   }
+
 
   return v;
 }
@@ -71,17 +73,16 @@ function formatPhone(value: unknown){
 
 
 function joinNonEmpty(
- values:string[],
- sep:string
+values:string[],
+sep:string
 ){
 
- return values
- .map(v=>v.trim())
- .filter(Boolean)
- .join(sep);
+return values
+.map(x=>x.trim())
+.filter(Boolean)
+.join(sep);
 
 }
-
 
 
 
@@ -92,15 +93,10 @@ const fileInputRef =
 useRef<HTMLInputElement|null>(null);
 
 
-const [fileName,setFileName] =
-useState("");
 
-const [rows,setRows] =
-useState<Row[]>([]);
-
-const [status,setStatus] =
-useState("");
-
+const [fileName,setFileName]=useState("");
+const [rows,setRows]=useState<Row[]>([]);
+const [status,setStatus]=useState("");
 
 
 
@@ -111,11 +107,9 @@ setRows([]);
 setStatus("");
 
 if(fileInputRef.current)
- fileInputRef.current.value="";
+fileInputRef.current.value="";
 
 };
-
-
 
 
 
@@ -123,12 +117,8 @@ if(fileInputRef.current)
 const handleFile = async(file:File)=>{
 
 
-try{
-
-
 const buffer =
 await file.arrayBuffer();
-
 
 
 const wb =
@@ -160,26 +150,11 @@ defval:""
 setRows(json);
 setFileName(file.name);
 
-
 setStatus(
 `Loaded ${json.length} rows`
 );
 
-
-}
-catch(error){
-
-console.error(error);
-
-setStatus(
-"Failed to read Excel file"
-);
-
-}
-
-
 };
-
 
 
 
@@ -187,86 +162,45 @@ setStatus(
 const onFileChange =
 (e:React.ChangeEvent<HTMLInputElement>)=>{
 
-
-const file =
-e.target.files?.[0];
-
+const file=e.target.files?.[0];
 
 if(file)
 handleFile(file);
-
+  
 
 };
-
-
-
-
-
-
-
 const buildRowForJob = (
 jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
 
 
+const customerFirst =
+jobRows.find(r => r[mapping.firstName])?.[mapping.firstName];
 
-const first =
-jobRows[0] ?? {};
-
-
+const customerLast =
+jobRows.find(r => r[mapping.lastName])?.[mapping.lastName];
 
 
 const customerName =
 joinNonEmpty(
 [
-formatCell(first[mapping.firstName]),
-formatCell(first[mapping.lastName])
+  formatCell(customerFirst),
+  formatCell(customerLast)
 ],
 " "
 );
 
 
 
+const get=(key:keyof typeof mapping)=>{
 
+const col=mapping[key];
 
-const phone =
-formatPhone(
-first[mapping.phone]
-);
-
-
-
-
-
-const address =
-joinNonEmpty(
-[
-formatCell(first[mapping.address]),
-formatCell(first[mapping.suburb]),
-formatCell(first[mapping.state]),
-formatCell(first[mapping.postcode])
-],
-", "
-);
-
-
-
-
-
-
-
-const get =
-(key:keyof typeof mapping)=>{
-
-const col =
-mapping[key];
-
-return formatCell(
-first[col]
-);
+return formatCell(first[col]);
 
 };
+
 
 
 
@@ -285,26 +219,19 @@ indoor:string[];
 
 
 
-
 for(const row of jobRows){
 
 
 const product =
-formatCell(
-row[mapping.product]
-);
+formatCell(row[mapping.product]);
 
 
 const model =
-formatCell(
-row[mapping.productModel]
-);
+formatCell(row[mapping.productModel]);
 
 
 const serial =
-formatCell(
-row[mapping.serial]
-);
+formatCell(row[mapping.serial]);
 
 
 
@@ -313,11 +240,8 @@ continue;
 
 
 
-
 const key =
 `${product}-${model}`;
-
-
 
 
 
@@ -338,13 +262,10 @@ indoor:[]
 
 
 
-const g =
-groups.get(key)!;
-
-
-
-
 if(serial){
+
+
+const g=groups.get(key)!;
 
 
 const type =
@@ -362,8 +283,7 @@ if(!g.outdoor.includes(serial))
 g.outdoor.push(serial);
 
 
-}
-else{
+}else{
 
 
 if(!g.indoor.includes(serial))
@@ -383,9 +303,7 @@ g.indoor.push(serial);
 
 
 
-
 const coes:string[]=[];
-
 
 
 
@@ -420,6 +338,7 @@ g.outdoor.forEach(s=>{
 coes.push(s);
 });
 
+
 coes.push("");
 
 }
@@ -442,9 +361,6 @@ coes.push(s);
 
 
 
-
-
-
 return {
 
 "Job ID":jobId,
@@ -455,18 +371,13 @@ return {
 
 "Address":address,
 
-"Installation Date":
-get("installDate"),
+"Installation Date":get("installDate"),
 
-"CoES":
-coes.join("\n")
+"CoES":coes.join("\n")
 
 };
 
 };
-
-
-
 
 
 
@@ -481,14 +392,11 @@ new Map<string,Row[]>();
 
 
 
-
 for(const row of rows){
 
 
 const id =
-String(
-row[mapping.jobId] ?? ""
-);
+String(row[mapping.jobId] ?? "");
 
 
 
@@ -502,10 +410,7 @@ jobMap.set(id,[]);
 
 
 
-jobMap
-.get(id)!
-.push(row);
-
+jobMap.get(id)!.push(row);
 
 }
 
@@ -550,11 +455,9 @@ OUTPUT_COLUMNS.map(c=>({
 wch:
 c==="CoES"
 ?60
-:
-c==="Address"
+:c==="Address"
 ?45
-:
-25
+:25
 
 }));
 
@@ -585,9 +488,7 @@ setStatus(
 `Exported ${output.length} jobs`
 );
 
-
 };
-
 
 
 
@@ -597,9 +498,10 @@ setStatus(
 const preview =
 useMemo(
 ()=>createOutput(),
-[rows]
+[
+rows
+]
 );
-
 
 
 
@@ -615,6 +517,7 @@ return (
 
 
 <div className="mb-8">
+
 
 <div className="flex items-center gap-2 text-blue-600">
 
@@ -632,6 +535,7 @@ Upload Excel → Preview → Download
 </p>
 
 
+
 {status &&
 <div className="mt-3 rounded bg-green-100 p-2 text-green-700">
 {status}
@@ -639,16 +543,14 @@ Upload Excel → Preview → Download
 }
 
 
+
 </div>
 
 
 
 
 
-
-
 {!fileName ? (
-
 
 <div className="rounded-xl border-2 border-dashed bg-white p-14 text-center">
 
@@ -684,12 +586,10 @@ onChange={onFileChange}
 </div>
 
 
-:(
-
+):(
 
 
 <div className="space-y-6">
-
 
 
 <div className="rounded-xl bg-white p-5 shadow">
@@ -733,7 +633,6 @@ Remove
 
 
 
-
 <button
 
 onClick={downloadExcel}
@@ -742,11 +641,13 @@ className="mt-5 rounded bg-blue-600 px-5 py-3 text-white"
 
 >
 
+
 <ListChecks size={18} className="inline mr-2"/>
 
 Download Excel
 
 </button>
+
 
 
 </div>
@@ -755,8 +656,7 @@ Download Excel
 
 
 
-
-{preview.length>0 &&
+{preview.length>0 && (
 
 <div className="overflow-auto rounded-xl bg-white shadow">
 
@@ -768,7 +668,8 @@ Download Excel
 
 <tr>
 
-{OUTPUT_COLUMNS.map(c=>(
+{
+OUTPUT_COLUMNS.map(c=>(
 
 <th
 key={c}
@@ -779,9 +680,11 @@ className="border p-3 text-left"
 
 </th>
 
-))}
+))
+}
 
 </tr>
+
 
 </thead>
 
@@ -791,12 +694,14 @@ className="border p-3 text-left"
 <tbody>
 
 
-{preview.map(row=>(
+{
+preview.map(row=>(
 
 <tr key={row["Job ID"]}>
 
 
-{OUTPUT_COLUMNS.map(c=>(
+{
+OUTPUT_COLUMNS.map(c=>(
 
 <td
 
@@ -810,12 +715,14 @@ className="border p-3 align-top whitespace-pre-line"
 
 </td>
 
-))}
+))
+}
 
 
 </tr>
 
-))}
+))
+}
 
 
 </tbody>
@@ -826,12 +733,10 @@ className="border p-3 align-top whitespace-pre-line"
 
 </div>
 
-}
-
+)}
 
 
 </div>
-
 
 )}
 
@@ -842,9 +747,7 @@ className="border p-3 align-top whitespace-pre-line"
 
 );
 
-
 }
-
 
 
 export default App;
