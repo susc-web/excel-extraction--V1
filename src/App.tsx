@@ -228,6 +228,12 @@ const first =
 jobRows[0] ?? {};
 
 const findValue = (column:string)=>{
+  
+const normalize = (s:string) =>
+  s
+  .trim()
+  .toLowerCase()
+  .replace(/\s+/g," ");
 
 const row =
 jobRows.find(
