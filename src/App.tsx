@@ -132,6 +132,7 @@ if(fileInputRef.current){
 
 const handleFile = async(file:File)=>{
 
+try{
 
 const buffer =
 await file.arrayBuffer();
@@ -148,19 +149,20 @@ buffer,
 
 
 const ws =
-wb.Sheets[
-wb.SheetNames[0]
-];
+wb.Sheets[wb.SheetNames[0]];
 
 
 const json =
 XLSX.utils.sheet_to_json<Row>(
 ws,
 {
- defval:""
+ defval:"",
+ raw:false
 }
 );
 
+
+console.log("Excel first row:", json[0]);
 
 
 setRows(json);
@@ -173,8 +175,16 @@ setStatus(
 );
 
 
-};
+}
+catch(error){
 
+console.error(error);
+
+setStatus("Failed to read Excel");
+
+}
+
+};
 
 
 
