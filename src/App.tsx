@@ -407,7 +407,6 @@ g.serials.push(serial);
 const coes:string[]=[];
 
 
-
 groups.forEach(g=>{
 
 
@@ -421,27 +420,36 @@ g.model
 );
 
 
+if(title){
+  coes.push(title);
+}
 
-if(title)
-coes.push(title);
 
 
+g.serials.forEach(
+(serial,index)=>{
 
-if(g.serials.length > 0){
 
-  coes.push(`Outdoor : ${g.serials[0]}`);
+if(index === 0){
 
-  for(let i = 1; i < g.serials.length; i++){
+coes.push(
+`Outdoor : ${serial}`
+);
 
-    coes.push(`Indoor : ${g.serials[i]}`);
+}
+else{
 
-  }
+coes.push(
+`Indoor : ${serial}`
+);
 
 }
 
 
 });
 
+
+});
 
 
 
