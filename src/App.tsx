@@ -272,11 +272,17 @@ row[key]
 "";
 
 };
+const first =
+jobRows[0] ?? {};
+
+
 const customerFirst =
-  formatCell(first(mapping.firstName));
+  formatCell(first[mapping.firstName]);
+
 
 const customerLast =
-  formatCell(first(mapping.lastName));
+  formatCell(first[mapping.lastName]);
+
 
 const customerName =
   `${customerFirst} ${customerLast}`.trim();
