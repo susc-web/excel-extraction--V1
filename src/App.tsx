@@ -257,6 +257,7 @@ get("state")
 
 
 
+
 const groups =
 new Map<string,{
 product:string;
@@ -335,7 +336,9 @@ g.serials.push(serial);
 
 
 
-const coes:string[]=[];
+
+
+const coes:string[] = [];
 
 
 
@@ -353,31 +356,109 @@ g.model
 
 
 
-if(title)
+if(title){
+
 coes.push(title);
-
-
-
-g.serials.forEach(
-(s,i)=>{
-
-
-if(i===0){
-
-coes.push(
-`Serial Number: Outdoor: ${s}`
-);
-
-}else{
-
-coes.push(
-`Indoor: ${s}`
-);
+coes.push("");
 
 }
 
 
+
+
+const outdoor:string[]=[];
+const indoor:string[]=[];
+
+
+
+for(const row of jobRows){
+
+
+const serial =
+formatCell(
+row[mapping.serial]
+);
+
+
+
+if(!serial) continue;
+
+
+
+
+const type =
+String(
+row[mapping.questionCol] ?? ""
+)
+.toLowerCase();
+
+
+
+
+if(type.includes("outdoor")){
+
+
+if(!outdoor.includes(serial)){
+outdoor.push(serial);
+}
+
+
+}else{
+
+
+if(!indoor.includes(serial)){
+indoor.push(serial);
+}
+
+
+}
+
+
+}
+
+
+
+
+
+
+if(outdoor.length){
+
+
+coes.push("Outdoor:");
+
+
+
+outdoor.forEach(s=>{
+
+coes.push(s);
+
 });
+
+
+
+coes.push("");
+
+}
+
+
+
+
+if(indoor.length){
+
+
+coes.push("Indoor:");
+
+
+
+indoor.forEach(s=>{
+
+coes.push(s);
+
+});
+
+
+}
+
 
 
 });
