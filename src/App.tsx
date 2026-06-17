@@ -30,7 +30,7 @@ const mapping = {
   suburb: "Customer Suburb",
   postcode: "Customer Postcode",
   state: "Customer State",
-  installDate: "Scheduled Date",
+  installDate: "Date  Scheduled Date",
   product: "Primary Product 1 Brand",
   productModel: "Primary Product 1 Model",
   serial: "Serial",
