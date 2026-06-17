@@ -235,17 +235,15 @@ const normalize = (s:string) =>
   .toLowerCase()
   .replace(/\s+/g," ");
 
-const row =
-jobRows.find(
-r =>
-Object.keys(r)
-.some(
-k =>
-k.trim().toLowerCase()
-===
-column.trim().toLowerCase()
-)
-);
+  const row =
+  jobRows.find(
+    r =>
+    Object.keys(r)
+    .some(
+      k =>
+      normalize(k) === normalize(column)
+    )
+  );
 
 
 if(!row)
