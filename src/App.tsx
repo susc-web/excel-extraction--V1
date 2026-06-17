@@ -193,7 +193,7 @@ const customerName =
 joinNonEmpty(
 [
 get("firstName"),
-get("lastName")
+get("surname")
 ],
 " "
 );
