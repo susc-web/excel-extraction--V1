@@ -427,21 +427,15 @@ coes.push(title);
 
 
 
-g.serials.forEach(
-(s,i)=>{
+if(g.serials.length > 0){
 
+  coes.push(`Outdoor : ${g.serials[0]}`);
 
-if(i===0){
+  for(let i = 1; i < g.serials.length; i++){
 
-coes.push(
-`Serial Number: Outdoor: ${s}`
-);
+    coes.push(`Indoor : ${g.serials[i]}`);
 
-}else{
-
-coes.push(
-`Indoor: ${s}`
-);
+  }
 
 }
 
