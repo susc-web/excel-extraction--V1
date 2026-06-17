@@ -49,16 +49,26 @@ function formatCell(value: unknown) {
 
 
   if(value instanceof Date){
-    return value
-      .toISOString()
-      .split("T")[0];
+
+    const day =
+      String(value.getDate())
+      .padStart(2,"0");
+
+    const month =
+      String(value.getMonth()+1)
+      .padStart(2,"0");
+
+    const year =
+      String(value.getFullYear())
+      .slice(-2);
+
+
+    return `${day}/${month}/${year}`;
   }
 
 
   return String(value);
 }
-
-
 
 function formatPhone(value: unknown){
 
