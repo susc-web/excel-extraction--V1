@@ -578,6 +578,7 @@ header:[
 
 // Force Installation Date display format dd/mm/yyyy
 // Force Installation Date display as dd/mm/yyyy
+// Force Installation Date as DD/MM/YYYY text
 const dateCol =
   OUTPUT_COLUMNS.indexOf("Installation Date");
 
@@ -599,17 +600,17 @@ for (
 
   if(cell){
 
-    // keep as text with leading zeros
-    cell.t = "s";
-
-    cell.v =
+    const formatted =
       formatCell(cell.v);
+
+    cell.v = formatted;
+
+    // force text (prevents Excel changing to mm/dd/yy)
+    cell.t = "s";
 
   }
 
 }
-
-
 
 
 ws["!cols"] =
