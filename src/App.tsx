@@ -565,11 +565,7 @@ const output =
 createOutput();
 
 
-const outputFixed = output.map(row => ({
-  ...row,
-  "Installation Date": String(row["Installation Date"])
-}));
-
+const outputFixed = output;
 
 const ws =
   XLSX.utils.json_to_sheet(
