@@ -573,9 +573,8 @@ createOutput();
 
 const outputFixed = output.map(row => ({
   ...row,
-  "Installation Date": String(
-    formatCell(row["Installation Date"])
-  )
+  "Installation Date":
+    `'${formatCell(row["Installation Date"])}`
 }));
 
 const ws =
@@ -583,8 +582,7 @@ const ws =
     outputFixed,
     {
       header: [...OUTPUT_COLUMNS],
-      cellDates: false,
-      raw: true
+      cellDates: false
     }
   );
 // Force Installation Date as text dd/mm/yyyy
