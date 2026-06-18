@@ -93,6 +93,7 @@ if(dateMatch){
 
   return `${day}/${month}/${year}`;
 }
+return text;  
 }
 
 
