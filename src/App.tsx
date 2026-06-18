@@ -96,7 +96,7 @@ function formatCell(value: unknown) {
 
   return text;
 }
-}
+
 
 function formatPhone(value: unknown){
 
