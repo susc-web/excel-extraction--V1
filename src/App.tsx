@@ -180,7 +180,7 @@ XLSX.read(
 buffer,
 {
  type:"array",
- cellDates:true
+ cellDates:false
 }
 );
 
