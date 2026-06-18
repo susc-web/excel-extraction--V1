@@ -224,49 +224,37 @@ jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
   
-  const normalize = (value:string) =>
+const normalize = (value:string) =>
   value
-    .replace(/\s+/g, " ")   // remove extra spaces
+    .replace(/[\u00A0\u200B]/g, "")
+    .replace(/\s+/g, "")
     .trim()
     .toLowerCase();
 
+
 const findValue = (column:string)=>{
-  
-const wanted = normalize(column);
-const row =
-jobRows.find(
-r =>
-Object.keys(r)
-.some(
-k =>
-k.trim().toLowerCase()
-===
-column.trim().toLowerCase()
-)
-);
+
+  const wanted = normalize(column);
 
 
-if(!row)
-return "";
+  for (const row of jobRows) {
 
-const key =
-Object.keys(row)
-.find(
- k => normalize(k) === wanted
-);
+    const key =
+      Object.keys(row).find(
+        k => normalize(k) === wanted
+      );
 
 
-return key
-?
-row[key]
-:
-"";
+    if (key && row[key] !== "") {
+      return row[key];
+    }
+
+  }
+
+
+  return "";
 
 };
-
-const first =
-jobRows[0] ?? {};
-
 
 
 const customerFirst =
@@ -274,7 +262,10 @@ const customerFirst =
 
 const customerLast =
   formatCell(findValue(mapping.lastName));
-
+  
+console.log("FIRST:", findValue(mapping.firstName));
+console.log("LAST:", findValue(mapping.lastName));
+console.log("HEADERS:", Object.keys(jobRows[0]));
 
 const customerName =
   joinNonEmpty(
