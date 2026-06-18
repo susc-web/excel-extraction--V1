@@ -95,8 +95,7 @@ if(dateMatch){
 }
 
 
-  return text;
-}
+
 
 
 function formatPhone(value: unknown){
