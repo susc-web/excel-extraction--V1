@@ -581,6 +581,7 @@ const ws =
 const dateCol =
   OUTPUT_COLUMNS.indexOf("Installation Date");
 
+
 for (let r = 1; r <= outputFixed.length; r++) {
 
   const cellAddress =
@@ -589,28 +590,17 @@ for (let r = 1; r <= outputFixed.length; r++) {
       c: dateCol
     });
 
+
   const cell = ws[cellAddress];
 
-  if (cell && cell.v) {
 
-    const parts = String(cell.v).split("/");
+  if (cell) {
 
-    if(parts.length === 3){
+    cell.t = "s"; // text
 
-      const day = Number(parts[0]);
-      const month = Number(parts[1]) - 1;
-      const year = Number(parts[2]);
+    cell.v =
+      formatCell(cell.v); // forces dd/mm/yyyy
 
-      cell.t = "n";
-      cell.v = new Date(
-        year,
-        month,
-        day
-      );
-
-      cell.z = "dd/mm/yyyy";
-
-    }
   }
 }
 ws["!cols"] =
