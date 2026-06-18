@@ -225,7 +225,7 @@ jobRows:Row[]
 ):Record<OutputCol,string>=>{
   
 const normalize = (value:string) =>
-  value
+  String(value)
     .replace(/[\u00A0\u200B]/g, "")
     .replace(/\s+/g, "")
     .trim()
@@ -236,46 +236,42 @@ const findValue = (column:string)=>{
 
   const wanted = normalize(column);
 
-
   for (const row of jobRows) {
 
-    const key =
-      Object.keys(row).find(
-        k => normalize(k) === wanted
-      );
+    const key = Object.keys(row).find(
+      k => normalize(k) === wanted
+    );
 
-
-    if (key && row[key] !== "") {
+    if (key) {
       return row[key];
     }
-
   }
 
-
   return "";
-
 };
 
 
 const customerFirst =
-  formatCell(findValue(mapping.firstName));
-
-const customerLast =
-  formatCell(findValue(mapping.lastName));
-  
-console.log("FIRST:", findValue(mapping.firstName));
-console.log("LAST:", findValue(mapping.lastName));
-console.log("HEADERS:", Object.keys(jobRows[0]));
-
-const customerName =
-  joinNonEmpty(
-    [
-      customerFirst,
-      customerLast
-    ],
-    " "
+  formatCell(
+    findValue(mapping.firstName)
   );
 
+const customerLast =
+  formatCell(
+    findValue(mapping.lastName)
+  );
+
+
+const customerName =
+  `${customerFirst} ${customerLast}`.trim();
+  
+  console.log({
+  customerFirst,
+  customerLast,
+  customerName,
+  headers: Object.keys(jobRows[0])
+});
+  
 
 // normal first-row fields
 const get =
