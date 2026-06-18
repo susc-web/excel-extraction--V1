@@ -565,7 +565,12 @@ const output =
 createOutput();
 
 
-const outputFixed = output;
+const outputFixed = output.map(row => ({
+  ...row,
+  "Installation Date":
+    formatCell(row["Installation Date"])
+}));
+
 
 const ws =
   XLSX.utils.json_to_sheet(
