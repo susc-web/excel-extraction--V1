@@ -76,25 +76,23 @@ function formatCell(value: unknown) {
     );
 
 
-  if(dateMatch){
+if(dateMatch){
 
-    const day =
-      dateMatch[1].padStart(2,"0");
+  const day =
+    dateMatch[1].padStart(2,"0");
 
-    const month =
-      dateMatch[2].padStart(2,"0");
+  const month =
+    dateMatch[2].padStart(2,"0");
 
-    let year =
-      dateMatch[3];
+  let year =
+    dateMatch[3];
 
-
-    if(year.length === 2){
-      year = "20" + year;
-    }
-
-
-    return `${day}/${month}/${year}`;
+  if(year.length === 2){
+    year = "20" + year;
   }
+
+  return `${day}/${month}/${year}`;
+}
 
 
   return text;
