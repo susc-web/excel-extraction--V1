@@ -586,9 +586,24 @@ const ws =
     }
   );
 // Force Installation Date as text dd/mm/yyyy
-// Force Installation Date as real date dd/mm/yyyy
-const dateCol =
-  OUTPUT_COLUMNS.indexOf("Installation Date");
+const dateCol = OUTPUT_COLUMNS.indexOf("Installation Date");
+
+
+for (let r = 1; r <= outputFixed.length; r++) {
+
+  const cellAddress = XLSX.utils.encode_cell({
+    r,
+    c: dateCol
+  });
+
+  const cell = ws[cellAddress];
+
+  if (cell) {
+    cell.t = "s";          // string
+    cell.v = String(cell.v);
+    cell.z = "@";          // Excel text format
+  }
+}
 
 ws["!cols"] =
 OUTPUT_COLUMNS.map(
