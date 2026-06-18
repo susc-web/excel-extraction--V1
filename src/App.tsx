@@ -565,54 +565,42 @@ const output =
 createOutput();
 
 
+const outputFixed = output.map(row => ({
+  ...row,
+  "Installation Date": String(row["Installation Date"])
+}));
+
 
 const ws =
-XLSX.utils.json_to_sheet(
-output,
-{
-header:[
-...OUTPUT_COLUMNS
-]
-}
-);
+  XLSX.utils.json_to_sheet(
+    outputFixed,
+    {
+      header: [...OUTPUT_COLUMNS]
+    }
+  );
 
-// Force Installation Date display format dd/mm/yyyy
-// Force Installation Date display as dd/mm/yyyy
-// Force Installation Date as DD/MM/YYYY text
+
+// Force Installation Date as text dd/mm/yyyy
 const dateCol =
   OUTPUT_COLUMNS.indexOf("Installation Date");
 
+for (let r = 1; r <= outputFixed.length; r++) {
 
-for (
-  let row = 1;
-  row <= output.length;
-  row++
-) {
+  const cellAddress =
+    XLSX.utils.encode_cell({
+      r,
+      c: dateCol
+    });
 
-  const cell =
-    ws[
-      XLSX.utils.encode_cell({
-        r: row,
-        c: dateCol
-      })
-    ];
+  if (ws[cellAddress]) {
 
-
-  if(cell){
-
-    const formatted =
-      formatCell(cell.v);
-
-    cell.v = formatted;
-
-    // force text (prevents Excel changing to mm/dd/yy)
-    cell.t = "s";
+    ws[cellAddress] = {
+      t: "s",
+      v: "'" + String(ws[cellAddress].v)
+    };
 
   }
-
 }
-
-
 ws["!cols"] =
 OUTPUT_COLUMNS.map(
 c=>({
@@ -626,7 +614,6 @@ c==="CoES"
 
 })
 );
-
 
 
 
@@ -653,9 +640,7 @@ setStatus(
 `Exported ${output.length} jobs`
 );
 
-
 };
-
 
 
 
