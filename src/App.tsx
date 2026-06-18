@@ -223,9 +223,16 @@ const buildRowForJob = (
 jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
+  
+  const normalize = (value:string) =>
+  value
+    .replace(/\s+/g, " ")   // remove extra spaces
+    .trim()
+    .toLowerCase();
 
 const findValue = (column:string)=>{
-
+  
+const wanted = normalize(column);
 const row =
 jobRows.find(
 r =>
@@ -242,14 +249,10 @@ column.trim().toLowerCase()
 if(!row)
 return "";
 
-
 const key =
 Object.keys(row)
 .find(
-k =>
-k.trim().toLowerCase()
-===
-column.trim().toLowerCase()
+ k => normalize(k) === wanted
 );
 
 
@@ -265,39 +268,12 @@ const first =
 jobRows[0] ?? {};
 
 
-// search ALL job rows for customer details
-const getFromAnyRow = (column:string) => {
 
-  const row = jobRows.find(r =>
-    Object.keys(r).some(
-      k =>
-        k.trim().toLowerCase() ===
-        column.trim().toLowerCase()
-    )
-  );
-
-  if (!row) return "";
-
-  const key = Object.keys(row).find(
-    k =>
-      k.trim().toLowerCase() ===
-      column.trim().toLowerCase()
-  );
-
-  return key ? row[key] : "";
-};
-
-
-// customer name
 const customerFirst =
-  formatCell(
-    getFromAnyRow(mapping.firstName)
-  );
+  formatCell(findValue(mapping.firstName));
 
 const customerLast =
-  formatCell(
-    getFromAnyRow(mapping.lastName)
-  );
+  formatCell(findValue(mapping.lastName));
 
 
 const customerName =
