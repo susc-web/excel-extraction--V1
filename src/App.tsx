@@ -14,6 +14,7 @@ const OUTPUT_COLUMNS = [
   "Customer Name",
   "Customer Phone",
   "Address",
+  "Field Worker",
   "Installation Date",
   "CoES",
 ] as const;
@@ -34,6 +35,7 @@ const mapping = {
   product: "Primary Product 1 Brand",
   productModel: "Primary Product 1 Model",
   serial: "Serial",
+  fieldWorker: "Field Worker",
   questionCol: "Question Block Type",
 };
 
@@ -312,7 +314,16 @@ get("state")
 ],
 ", "
 );
+const fieldWorker =
+formatCell(
+  findValue(mapping.fieldWorker)
+);
 
+
+const finalFieldWorker =
+fieldWorker.trim().toLowerCase() === "warren crupi"
+? ""
+: fieldWorker;
 
 
 
@@ -464,7 +475,8 @@ address,
 "Installation Date":
 get("installDate"),
 
-
+"Field Worker": finalFieldWorker,
+  
 "CoES":
 coes.join("\n")
 
