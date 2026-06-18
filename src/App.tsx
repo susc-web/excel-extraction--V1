@@ -261,39 +261,67 @@ row[key]
 
 };
 
-
-// customer name from ALL rows
-const customerFirst =
-  formatCell(findValue(mapping.firstName));
-
-const customerLast =
-  formatCell(findValue(mapping.lastName));
-
-
-const customerName =
-  [customerFirst, customerLast]
-  .filter(Boolean)
-  .join(" ");
-
-
-
 const first =
 jobRows[0] ?? {};
 
 
-// other fields from first row
+// search ALL job rows for customer details
+const getFromAnyRow = (column:string) => {
+
+  const row = jobRows.find(r =>
+    Object.keys(r).some(
+      k =>
+        k.trim().toLowerCase() ===
+        column.trim().toLowerCase()
+    )
+  );
+
+  if (!row) return "";
+
+  const key = Object.keys(row).find(
+    k =>
+      k.trim().toLowerCase() ===
+      column.trim().toLowerCase()
+  );
+
+  return key ? row[key] : "";
+};
+
+
+// customer name
+const customerFirst =
+  formatCell(
+    getFromAnyRow(mapping.firstName)
+  );
+
+const customerLast =
+  formatCell(
+    getFromAnyRow(mapping.lastName)
+  );
+
+
+const customerName =
+  joinNonEmpty(
+    [
+      customerFirst,
+      customerLast
+    ],
+    " "
+  );
+
+
+// normal first-row fields
 const get =
 (key:keyof typeof mapping)=>{
 
-const col =
-mapping[key];
+  const col =
+    mapping[key];
 
-return formatCell(
-first[col]
-);
+  return formatCell(
+    first[col]
+  );
 
 };
-
 
 
 
