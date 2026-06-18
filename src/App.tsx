@@ -49,7 +49,8 @@ function formatCell(value: unknown) {
     value === ""
   ) return "";
 
-if(value instanceof Date){
+
+  if(value instanceof Date){
 
     const day =
       String(value.getDate())
@@ -69,10 +70,9 @@ if(value instanceof Date){
   const text = String(value).trim();
 
 
-  // Handle date strings like 1/6/2026 or 01/06/2026
   const dateMatch =
     text.match(
-      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
+      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2}|\d{4})$/
     );
 
 
@@ -84,8 +84,14 @@ if(value instanceof Date){
     const month =
       dateMatch[2].padStart(2,"0");
 
-    const year =
+    let year =
       dateMatch[3];
+
+
+    if(year.length === 2){
+      year = "20" + year;
+    }
+
 
     return `${day}/${month}/${year}`;
   }
