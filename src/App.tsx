@@ -224,26 +224,19 @@ jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
 
-const first =
-jobRows[0] ?? {};
-
 const findValue = (column:string)=>{
-  
-const normalize = (s:string) =>
-  s
-  .trim()
-  .toLowerCase()
-  .replace(/\s+/g," ");
 
-  const row =
-  jobRows.find(
-    r =>
-    Object.keys(r)
-    .some(
-      k =>
-      normalize(k) === normalize(column)
-    )
-  );
+const row =
+jobRows.find(
+r =>
+Object.keys(r)
+.some(
+k =>
+k.trim().toLowerCase()
+===
+column.trim().toLowerCase()
+)
+);
 
 
 if(!row)
@@ -269,8 +262,7 @@ row[key]
 };
 
 
-// ADD HERE
-
+// customer name from ALL rows
 const customerFirst =
   formatCell(findValue(mapping.firstName));
 
@@ -284,6 +276,12 @@ const customerName =
   .join(" ");
 
 
+
+const first =
+jobRows[0] ?? {};
+
+
+// other fields from first row
 const get =
 (key:keyof typeof mapping)=>{
 
