@@ -49,14 +49,9 @@ function formatCell(value: unknown) {
     value === ""
   ) return "";
 
-  if(typeof value === "number") {
-
-    const date = XLSX.SSF.parse_date_code(value);
-
-    if(date){
-      return `${String(date.d).padStart(2,"0")}/${String(date.m).padStart(2,"0")}/${date.y}`;
-    }
-  }
+  if (typeof value === "number") {
+  return String(value);
+}
 
 
   if(value instanceof Date){
@@ -97,7 +92,29 @@ if(dateMatch){
 return text;  
 }
 
+function formatDate(value: unknown) {
 
+  if (
+    value === undefined ||
+    value === null ||
+    value === ""
+  ) return "";
+
+  if (typeof value === "number") {
+
+    const date = XLSX.SSF.parse_date_code(value);
+
+    if (date) {
+      return `${String(date.d).padStart(2,"0")}/${String(date.m).padStart(2,"0")}/${date.y}`;
+    }
+  }
+
+  if (value instanceof Date) {
+    return `${String(value.getDate()).padStart(2,"0")}/${String(value.getMonth()+1).padStart(2,"0")}/${value.getFullYear()}`;
+  }
+
+  return String(value);
+}
 
 
 function formatPhone(value: unknown){
@@ -499,7 +516,7 @@ address,
 
 
 "Installation Date":
-get("installDate"),
+formatDate(first[mapping.installDate]),
 
 "Field Worker": finalFieldWorker,
   
