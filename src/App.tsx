@@ -582,10 +582,10 @@ const ws =
   XLSX.utils.json_to_sheet(
     outputFixed,
     {
-      header: [...OUTPUT_COLUMNS]
+      header: [...OUTPUT_COLUMNS],
+      cellDates: false
     }
   );
-
 
 // Force Installation Date as text dd/mm/yyyy
 // Force Installation Date as real date dd/mm/yyyy
@@ -611,7 +611,7 @@ for (let r = 1; r <= outputFixed.length; r++) {
 
     cell.v =
       formatCell(cell.v); // forces dd/mm/yyyy
-
+     cell.z = "@";
   }
 }
 ws["!cols"] =
