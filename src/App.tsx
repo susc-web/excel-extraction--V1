@@ -49,19 +49,20 @@ function formatCell(value: unknown) {
     value === ""
   ) return "";
 
+  if(typeof value === "number") {
+
+    const date = XLSX.SSF.parse_date_code(value);
+
+    if(date){
+      return `${String(date.d).padStart(2,"0")}/${String(date.m).padStart(2,"0")}/${date.y}`;
+    }
+  }
+
 
   if(value instanceof Date){
-
-    const day =
-      String(value.getDate())
-      .padStart(2,"0");
-
-    const month =
-      String(value.getMonth()+1)
-      .padStart(2,"0");
-
-    const year =
-      String(value.getFullYear());
+    const day = String(value.getDate()).padStart(2,"0");
+    const month = String(value.getMonth()+1).padStart(2,"0");
+    const year = String(value.getFullYear());
 
     return `${day}/${month}/${year}`;
   }
@@ -184,7 +185,7 @@ XLSX.read(
 buffer,
 {
  type:"array",
- cellDates:false
+ cellDates:true
 }
 );
 
@@ -198,7 +199,7 @@ XLSX.utils.sheet_to_json<Row>(
 ws,
 {
  defval:"",
- raw:false
+ raw:true
 }
 );
 
@@ -572,7 +573,7 @@ createOutput();
 const outputFixed = output.map(row => ({
   ...row,
   "Installation Date":
-    `'${formatCell(row["Installation Date"])}`
+    formatCell(row["Installation Date"])
 }));
 
 const ws =
