@@ -69,7 +69,33 @@ function formatCell(value: unknown) {
   }
 
 
-  return String(value);
+  const text = String(value).trim();
+
+
+  // Handle date strings like 1/6/2026 or 01/06/2026
+  const dateMatch =
+    text.match(
+      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
+    );
+
+
+  if(dateMatch){
+
+    const day =
+      dateMatch[1].padStart(2,"0");
+
+    const month =
+      dateMatch[2].padStart(2,"0");
+
+    const year =
+      dateMatch[3];
+
+    return `${day}/${month}/${year}`;
+  }
+
+
+  return text;
+}
 }
 
 function formatPhone(value: unknown){
