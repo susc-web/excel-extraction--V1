@@ -577,9 +577,16 @@ header:[
 );
 
 // Force Installation Date display format dd/mm/yyyy
-const dateCol = OUTPUT_COLUMNS.indexOf("Installation Date");
+// Force Installation Date display as dd/mm/yyyy
+const dateCol =
+  OUTPUT_COLUMNS.indexOf("Installation Date");
 
-for (let row = 1; row <= output.length; row++) {
+
+for (
+  let row = 1;
+  row <= output.length;
+  row++
+) {
 
   const cell =
     ws[
@@ -589,8 +596,15 @@ for (let row = 1; row <= output.length; row++) {
       })
     ];
 
+
   if(cell){
-    cell.z = "dd/mm/yyyy";
+
+    // keep as text with leading zeros
+    cell.t = "s";
+
+    cell.v =
+      formatCell(cell.v);
+
   }
 
 }
