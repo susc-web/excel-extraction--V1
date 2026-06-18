@@ -573,47 +573,25 @@ createOutput();
 
 const outputFixed = output.map(row => ({
   ...row,
-  "Installation Date":
+  "Installation Date": String(
     formatCell(row["Installation Date"])
+  )
 }));
-
 
 const ws =
   XLSX.utils.json_to_sheet(
     outputFixed,
     {
       header: [...OUTPUT_COLUMNS],
-      cellDates: false
+      cellDates: false,
+      raw: true
     }
   );
-
 // Force Installation Date as text dd/mm/yyyy
 // Force Installation Date as real date dd/mm/yyyy
 const dateCol =
   OUTPUT_COLUMNS.indexOf("Installation Date");
 
-
-for (let r = 1; r <= outputFixed.length; r++) {
-
-  const cellAddress =
-    XLSX.utils.encode_cell({
-      r,
-      c: dateCol
-    });
-
-
-  const cell = ws[cellAddress];
-
-
-  if (cell) {
-
-    cell.t = "s"; // text
-
-    cell.v =
-      formatCell(cell.v); // forces dd/mm/yyyy
-     cell.z = "@";
-  }
-}
 ws["!cols"] =
 OUTPUT_COLUMNS.map(
 c=>({
