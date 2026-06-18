@@ -224,6 +224,8 @@ jobId:string,
 jobRows:Row[]
 ):Record<OutputCol,string>=>{
   
+  const first = jobRows[0];
+  
 const normalize = (value:string) =>
   String(value)
     .replace(/[\u00A0\u200B]/g, "")
