@@ -69,34 +69,6 @@ if(value instanceof Date){
   const text = String(value).trim();
 
 
-  // Handles 1/6/2026, 01/06/2026, 1-6-2026
-  const dateMatch =
-    text.match(
-      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
-    );
-
-
-  if(dateMatch){
-
-    const day =
-      dateMatch[1].padStart(2,"0");
-
-    const month =
-      dateMatch[2].padStart(2,"0");
-
-    const year =
-      dateMatch[3];
-
-    return `${day}/${month}/${year}`;
-  }
-
-
-  return text;
-}
-
-  const text = String(value).trim();
-
-
   // Handle date strings like 1/6/2026 or 01/06/2026
   const dateMatch =
     text.match(
@@ -266,8 +238,6 @@ if(file)
 handleFile(file);
 
 };
-
-
 
 
 
@@ -605,6 +575,25 @@ header:[
 ]
 }
 );
+
+// Force Installation Date display format dd/mm/yyyy
+const dateCol = OUTPUT_COLUMNS.indexOf("Installation Date");
+
+for (let row = 1; row <= output.length; row++) {
+
+  const cell =
+    ws[
+      XLSX.utils.encode_cell({
+        r: row,
+        c: dateCol
+      })
+    ];
+
+  if(cell){
+    cell.z = "dd/mm/yyyy";
+  }
+
+}
 
 
 
