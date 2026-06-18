@@ -49,8 +49,7 @@ function formatCell(value: unknown) {
     value === ""
   ) return "";
 
-
-  if(value instanceof Date){
+if(value instanceof Date){
 
     const day =
       String(value.getDate())
@@ -61,13 +60,39 @@ function formatCell(value: unknown) {
       .padStart(2,"0");
 
     const year =
-      String(value.getFullYear())
-      .slice(-2);
-
+      String(value.getFullYear());
 
     return `${day}/${month}/${year}`;
   }
 
+
+  const text = String(value).trim();
+
+
+  // Handles 1/6/2026, 01/06/2026, 1-6-2026
+  const dateMatch =
+    text.match(
+      /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/
+    );
+
+
+  if(dateMatch){
+
+    const day =
+      dateMatch[1].padStart(2,"0");
+
+    const month =
+      dateMatch[2].padStart(2,"0");
+
+    const year =
+      dateMatch[3];
+
+    return `${day}/${month}/${year}`;
+  }
+
+
+  return text;
+}
 
   const text = String(value).trim();
 
